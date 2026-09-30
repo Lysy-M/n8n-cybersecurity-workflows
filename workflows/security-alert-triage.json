@@ -1,0 +1,101 @@
+{
+  "name": "Security Alert Triage - Sanitized Example",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "source",
+              "value": "Wazuh",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "severity",
+              "value": "high",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "host",
+              "value": "lab-host-redacted",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "event",
+              "value": "Example authentication anomaly",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "sample-alert",
+      "name": "Sample Alert",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -280,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = String($json.severity || '').toLowerCase();\nconst priority = ['critical','high'].includes(s) ? 'P1/P2 review' : 'standard review';\nreturn [{json:{...$json, priority, summary:`[${$json.source}] ${$json.event} on ${$json.host} — ${priority}`}}];"
+      },
+      "id": "normalize",
+      "name": "Normalize & Prioritize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sample Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample Alert": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Prioritize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "sanitized-example-1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

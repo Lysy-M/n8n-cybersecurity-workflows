@@ -1,0 +1,99 @@
+{
+  "name": "Daily Cyber Briefing - Sanitized Example",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1",
+              "name": "topics",
+              "value": "cybersecurity, Linux, Proxmox, Wazuh, Suricata",
+              "type": "string"
+            },
+            {
+              "id": "b2",
+              "name": "source_note",
+              "value": "Connect your approved feeds/APIs here. No credentials included.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "config",
+      "name": "Briefing Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{generatedAt:new Date().toISOString(), topics:$json.topics, sections:['Critical vulnerabilities','Linux / Kali / Parrot','Wazuh / Suricata','Proxmox / Homelab','Actions to verify in LAB'], note:$json.source_note}}];"
+      },
+      "id": "structure",
+      "name": "Build Briefing Structure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Schedule": {
+      "main": [
+        [
+          {
+            "node": "Briefing Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Briefing Configuration": {
+      "main": [
+        [
+          {
+            "node": "Build Briefing Structure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "sanitized-example-1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
